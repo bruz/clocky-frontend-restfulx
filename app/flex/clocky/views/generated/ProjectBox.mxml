@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" label="Project"
+  xmlns:rx="org.restfulx.components.rx.*" creationComplete="init()">
+  <mx:Script><![CDATA[
+    import org.restfulx.Rx;
+    import org.restfulx.utils.RxUtils;
+    import org.restfulx.collections.ModelsCollection;
+    import clocky.models.Project;
+    import clocky.models.ProjectSession;
+
+    import flash.utils.Timer;
+    import flash.events.TimerEvent;
+    private const TIMER_INTERVAL:int = 10;
+    private var baseTimer:int;
+    private var t:Timer;
+
+    [Bindable]
+    private var project:Project = new Project();
+
+    [Bindable]
+    private var currentSession:ProjectSession = new ProjectSession();
+
+    [Bindable]
+    private var timerRunning:Boolean = false;
+
+    private function init():void {
+        t = new Timer(TIMER_INTERVAL);
+        t.addEventListener(TimerEvent.TIMER, updateTimer);
+    }
+
+    private function updateTimer(evt:TimerEvent):void {
+        var d:Date = new Date(getTimer() - baseTimer);
+        counter.text = dateFormatter.format(d);
+    }
+
+    private function startTimer():void {
+        timerRunning = true;
+        baseTimer = getTimer();
+        t.start();
+        currentSession.startTime = new Date();
+        currentSession.project = project
+        currentSession.description = descriptionTextInput.text
+        currentSession.create({onSuccess: onProjectSessionCreate});
+    }
+
+    private function onProjectSessionCreate(result:ProjectSession):void {
+      currentSession = result;
+    }
+    
+    private function stopTimer():void {
+        timerRunning = false;
+        t.stop();
+        currentSession.endTime = new Date();
+        currentSession.description = descriptionTextInput.text
+        currentSession.update();
+        currentSession = new ProjectSession();
+    }
+
+    private function newProject():void {
+      project = new Project();
+      projectsList.selectedIndex = -1;
+    }
+
+    private function saveProject():void {
+      updateModelProperties();
+      if (project.id) {
+        project.update({onSuccess: onProjectUpdate});
+      } else {
+        project.create({onSuccess: onProjectCreate});
+      }
+    }
+  
+    private function updateModelProperties():void {
+      project.name = nameTextInput.text;
+      project.startDate = startDateDateField.selectedDate;
+      project.projectStatus = statusTextInput.text;
+    }
+   
+    private function destroyProject():void {
+      project.destroy({onSuccess: onProjectDestroy});
+    }
+    
+    private function onProjectSelect():void {
+      project = RxUtils.clone(projectsList.selectedItem) as Project;
+    }
+    
+    private function onProjectCreate(result:Project):void {
+      project = new Project;
+    }
+    
+    private function onProjectUpdate(result:Project):void {
+      projectsList.selectedItem = result;
+      onProjectSelect();
+    }
+    
+    private function onProjectDestroy(result:Project):void {
+      onProjectCreate(result);
+    }    
+
+  ]]></mx:Script>
+  <mx:DateFormatter id="dateFormatter" formatString="NN:SS" />
+  <mx:Panel id="projectsPanel"
+    title="Projects" cornerRadius="0" dropShadowEnabled="false" borderStyle="solid"
+    borderThickness="1" backgroundColor="#EEEEEE" width="25%" height="100%">
+    <mx:List id="projectsList"
+      width="100%" height="100%"
+      dataProvider="{Rx.models.index(Project)}"
+      change="onProjectSelect()"/>
+    <mx:ControlBar width="100%">
+      <mx:Button label="New Project" width="100%" height="20"
+        click="newProject()"/>
+    </mx:ControlBar>
+  </mx:Panel>
+  <mx:Panel title="Project" cornerRadius="0" dropShadowEnabled="false" borderStyle="solid"
+    borderThickness="1" backgroundColor="#EEEEEE" width="75%" height="100%" layout="vertical">
+    <mx:Panel title="Edit Project" cornerRadius="0" dropShadowEnabled="false" borderStyle="solid"
+      borderThickness="1" backgroundColor="#EEEEEE" width="100%" height="35%" borderColor="#555555">
+      <mx:Form width="100%" height="100%">
+        <mx:FormItem label="Name" width="100%">
+          <mx:TextInput id="nameTextInput" width="100%" text="{project.name}"/>
+        </mx:FormItem>
+        <mx:FormItem label="StartDate" width="100%">
+          <mx:DateField id="startDateDateField" selectedDate="{project.startDate}"/>
+        </mx:FormItem>
+        <mx:FormItem label="Status" width="100%">
+          <mx:TextInput id="statusTextInput" width="100%" text="{project.projectStatus}"/>
+        </mx:FormItem>
+      </mx:Form>
+      <mx:ControlBar width="100%">
+        <mx:Button label="Save Project" width="50%" height="20"
+          click="saveProject()"/>
+        <mx:Button label="Delete Project" width="50%" height="20"
+          enabled="{RxUtils.canDeleteModel(project)}"
+          click="destroyProject()"/>
+      </mx:ControlBar>
+    </mx:Panel>
+    <mx:Panel title="Timer" cornerRadius="0" dropShadowEnabled="false" borderStyle="solid"
+      borderThickness="1" backgroundColor="#EEEEEE" width="100%" height="65%" borderColor="#555555">
+      <mx:ControlBar width="100%">
+        <mx:Button label="Start Timer" width="100" height="20"
+          click="startTimer()"
+          enabled="{!timerRunning}"/>
+        <mx:Button label="Stop Timer" width="100" height="20"
+          click="stopTimer()"
+          enabled="{timerRunning}"/>
+        <mx:Label id="counter" fontSize="14" />
+        <mx:FormItem label="Description" width="100%">
+          <mx:TextInput id="descriptionTextInput" width="100%" text="{currentSession.description}"/>
+        </mx:FormItem>
+      </mx:ControlBar>
+      <mx:Label text="Project Sessions"/>
+      <mx:DataGrid id="projectSessionsList"
+        width="100%" height="100%"
+        dataProvider="{project.projectSessions}">
+        <mx:columns>
+            <mx:DataGridColumn headerText="Start Time" dataField="startTime" resizable="true"/>
+            <mx:DataGridColumn headerText="End Time" dataField="endTime" resizable="true"/>
+            <mx:DataGridColumn headerText="Description" dataField="description" resizable="true"/>
+        </mx:columns>
+      </mx:DataGrid>
+    </mx:Panel>
+  </mx:Panel>
+</mx:HBox>

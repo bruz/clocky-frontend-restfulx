@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+  xmlns:generated="clocky.views.generated.*"
+  paddingBottom="8" paddingLeft="8" paddingRight="8" paddingTop="8"
+  layout="horizontal" styleName="plain" initialize="init()">
+  <mx:Script>
+    <![CDATA[
+      import org.restfulx.services.air.AIRServiceProvider;
+      import org.restfulx.services.http.XMLHTTPServiceProvider;
+      import org.restfulx.services.http.JSONHTTPServiceProvider;
+      import org.restfulx.Rx;
+      import clocky.controllers.ApplicationController;
+
+      private function init():void {
+        Rx.httpRootUrl = "http://localhost:3000/";
+        ApplicationController.initialize([JSONHTTPServiceProvider], JSONHTTPServiceProvider.ID);
+      }
+    ]]>
+  </mx:Script>
+  <mx:ViewStack id="mainViewStack" width="100%" height="100%">
+    <!-- For a simple demo, put all the components here. -->
+    <generated:ProjectBox/>
+  </mx:ViewStack>
+</mx:Application>

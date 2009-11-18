@@ -1,0 +1,12 @@
+project:
+ - name: string
+ - start_date: date
+ - projectStatus: string
+ - has_many: [project_sessions]
+
+project_session:
+ - start_time: datetime
+ - end_time: datetime
+ - description: string
+ - belongs_to: [project]
+
