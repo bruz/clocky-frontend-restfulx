@@ -13,7 +13,7 @@ Make sure to run it on port 3000 (the Rails default) as that's what the RestfulX
 Make sure you have the following prerequisites:
 - Ruby
 - RubyGems
-- The sinatra RubyGem
+- The sinatra RubyGem (which will install additional gem dependencies)
 
 Once those are in place, simply do:
 
