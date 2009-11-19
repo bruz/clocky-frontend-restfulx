@@ -1,7 +1,7 @@
 == Clocky RestfulX Frontend
 
 Clocky is a trivial web application that is being implemented using different client-side 
-frameworks. This is the RestfulX[http://restfulx.github.com implementation. It requires 
+frameworks. This is the RestfulX[http://restfulx.github.com] implementation. It requires 
 the {Clocky Rails Backend}[http://github.com/bruz/clocky-backend-rails.git].
 
 === Running the Clocky RestfulX Frontend
