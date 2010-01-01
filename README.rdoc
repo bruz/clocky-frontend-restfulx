@@ -2,11 +2,11 @@
 
 Clocky is a trivial web application that is being implemented using different client-side 
 frameworks. This is the RestfulX[http://restfulx.github.com] implementation. It requires 
-the {Clocky Rails Backend}[http://github.com/bruz/clocky-backend-rails.git].
+the {Clocky Rails Backend}[http://github.com/bruz/clocky-backend-rails].
 
 === Running the Clocky RestfulX Frontend
 
-Install the {Clocky Rails Backend}[http://github.com/bruz/clocky-backend-rails.git] as 
+Install the {Clocky Rails Backend}[http://github.com/bruz/clocky-backend-rails] as 
 described at http://github.com/bruz/clocky-backend-rails/blob/master/README.rdoc.
 Make sure to run it on port 3000 (the Rails default) as that's what the RestfulX app will expect.
 
@@ -20,3 +20,8 @@ Once those are in place, simply do:
   ruby server.rb
 
 You should now be able to browse to http://localhost:4567 and see the application.
+
+=== Other Clocky frontend implementations
+
+- {Clocky SproutCore Frontend}[http://github.com/bruz/clocky-frontend-sproutcore]
+- {Clocky Cappuccino Frontend}[http://github.com/bruz/clocky-frontend-cappuccino]
